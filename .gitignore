@@ -1,3 +1,22 @@
+# Build artifacts
+build/
+target/
+*.class
+*.jar
+*.war
+
+# Python cache
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*$py.class
+.Python
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*~
+
+# OS
+.DS_Store
+Thumbs.db
