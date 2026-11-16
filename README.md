@@ -1,33 +1,44 @@
-# Fundamentals and Setup — Phase 1 Internship Milestone
+# Fundamentals and Setup — Internship Milestones
+
+YuvaIntern DevOps Virtual Internship (Task-based) | Remote | Nov 2026 - Present
 
 ## Overview
-This repository contains the Phase 1 deliverables for the internship fundamentals track. It demonstrates environment setup, version control with Git/GitHub, basic Java programming, and project organization conventions.
+This repository hosts the completed internship tasks. It demonstrates environment setup with Git/GitHub, core Java concepts, and professional project conventions. All work is published on GitHub.
+
+## Completed Tasks
+
+### Task 1 — Fundamentals and Setup
+- Environment setup: Java JDK, Maven, Docker, and a code editor configured and verified
+- Version control: Git repository initialized, identity configured, commits made, remote linked, and changes pushed to GitHub
+- Milestone: `Greeting.java` — a standalone Java application demonstrating class design, package structure (`com.internship.hello`), and the `main` entry point
+- Report: `Fundamentals_and_Setup_Report.docx`
+
+### Task 2 — Core Concepts and Skills
+- Core Java concepts: object-oriented design, SOLID principles, design patterns (Singleton, Factory, Observer), and memory management
+- Mastery project: a Modular Library System applying the service-repository pattern for loose coupling and reusability
+- Quality benchmarks: unit testing with JUnit 5 and JavaDoc documentation
+- Report: `Core_Concepts_and_Skills_Report.docx`
 
 ## Project Structure
 ```
-foarge/
-├── src/
-│   └── com/
-│       └── internship/
-│           └── hello/
-│               └── Greeting.java      # Hello World milestone
-├── build/                             # Compiled .class files (gitignored)
-├── Fundamentals_and_Setup_Report.docx # Final report
-├── make_report.py                     # Report generation script
-└── README.md
+fundamentals-and-setup/
+├── .gitignore                          # ignores build artifacts, IDE files
+├── Core_Concepts_and_Skills_Report.docx # Task 2 report
+├── Fundamentals_and_Setup_Report.docx   # Task 1 report
+├── README.md
+└── src/
+    └── com/internship/hello/
+        └── Greeting.java                # Task 1 milestone
 ```
 
-## Prerequisites
-- Java SE 8+ (tested on Java 26)
-- Git
-- Code editor of choice (VS Code, IntelliJ IDEA, etc.)
+## Conventions
+- Java packages: lowercase (`com.internship.hello`); classes: PascalCase
+- Branches: `main` is protected; work on `task-<n>-<name>` branches, then merge into `main`
+- Commits: short imperative messages ("Add health endpoint")
 
-## Building and Running
+## Running the Milestone
 ```bash
-# Compile
 javac -d build src/com/internship/hello/Greeting.java
-
-# Run
 java -cp build com.internship.hello.Greeting
 ```
 
@@ -37,24 +48,10 @@ Hello, World!
 Hello, Internship!
 ```
 
-## What This Demonstrates
-1. **Environment Setup** — Java installation verified
-2. **Version Control** — Git initialized, commits made, pushed to GitHub
-3. **Project Conventions** — Standard package naming (com.domain.project.module)
-4. **Build Process** — Manual compilation demonstrating the concept
-5. **Documentation** — README explains setup and usage
+## Git Workflow
+- Task branches created per task (`task-2-core-concepts`)
+- Each task merged into `main` via no-ff merge
+- All work pushed to origin
 
-## Git Workflow Completed
-- Initialized local repository
-- Created `.gitignore` for build artifacts
-- Made initial commit with all source files
-- Linked to remote GitHub repository
-- Pushed to master branch
-
-## Next Steps
-Move to Phase 2 where more advanced frameworks and larger-scale projects will be introduced.
-
----
-Candidate: Prasa  
-Date: 2026-11-14  
-Repository: https://github.com/prasanm1423/fundamentals-and-setup
+## Repository
+https://github.com/prasanm1423/fundamentals-and-setup
