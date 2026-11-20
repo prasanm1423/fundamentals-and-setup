@@ -2,6 +2,8 @@ package com.example.devopshello.controller;
 
 import com.example.devopshello.model.Book;
 import com.example.devopshello.repository.BookRepository;
+import jakarta.validation.Validator;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +22,11 @@ import java.util.List;
 public class BookController {
 
     private final BookRepository bookRepository;
+    private final Validator validator;
 
-    public BookController(BookRepository bookRepository) {
+    public BookController(BookRepository bookRepository, Validator validator) {
         this.bookRepository = bookRepository;
+        this.validator = validator;
     }
 
     @GetMapping("/api/books")
@@ -39,12 +43,18 @@ public class BookController {
 
     @PostMapping("/api/books")
     public ResponseEntity<Book> create(@RequestBody Book book) {
+        if (!isValid(book)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(bookRepository.save(book));
     }
 
     @PutMapping("/api/books/{id}")
     public ResponseEntity<Book> update(@org.springframework.web.bind.annotation.PathVariable("id") Long id,
                                        @RequestBody Book book) {
+        if (!isValid(book)) {
+            return ResponseEntity.badRequest().build();
+        }
         return bookRepository.findById(id)
                 .map(existing -> {
                     existing.setTitle(book.getTitle());
@@ -62,5 +72,9 @@ public class BookController {
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private boolean isValid(Book book) {
+        return validator.validate(book).isEmpty();
     }
 }
