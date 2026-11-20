@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,5 +59,23 @@ class BookApiTest {
 
         mockMvc.perform(get("/api/books/" + saved.getId()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldRejectBlankTitleOnUpdate() throws Exception {
+        Book saved = bookRepository.save(new Book("978-0306406153", "Effective Java", "Joshua Bloch"));
+
+        mockMvc.perform(put("/api/books/" + saved.getId())
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"isbn\":\"978-0134853987\",\"title\":\"\",\"author\":\"X\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectBlankIsbnOnCreate() throws Exception {
+        mockMvc.perform(post("/api/books")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"isbn\":\"\",\"title\":\"X\",\"author\":\"Y\"}"))
+                .andExpect(status().isBadRequest());
     }
 }

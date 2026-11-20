@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * Book entity representing a library book with ISBN, title, and author.
@@ -17,12 +18,15 @@ public class Book {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     private String isbn;
 
     @Column(nullable = false)
+    @NotBlank
     private String title;
 
     @Column(nullable = false)
+    @NotBlank
     private String author;
 
     // JPA requires no-arg constructor
