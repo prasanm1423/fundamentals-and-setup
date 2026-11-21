@@ -20,29 +20,47 @@ This repository hosts the completed internship tasks. It demonstrates environmen
 - Report: `Core_Concepts_and_Skills_Report.docx`
 
 ### Task 3 — Practical Implementation Project
-- Full-stack Spring Boot REST API: Book Catalogue with CRUD endpoints
+- Full-stack Spring Boot REST API: Book Catalogue with CRUD endpoints for ISBN, title, author
 - Database: Spring Data JPA + H2 in-memory database
 - CI/CD: GitHub Actions pipeline (mvn clean verify + Docker build)
 - Multi-stage Docker image (~200MB runtime, ~700MB build)
-- 4 integration tests covering all 5 REST endpoints
-- Report: `Phase_3_Pracical_Implementation_Report.docx`
+- 3 integration tests covering all 5 REST endpoints
+- Report: `Phase_3_Practical_Implementation_Report.docx`
+- Source: `src/main/java/com/example/devopshello/`
+
+### Task 4 — Testing Coverage and Quality Assurance
+- Unit tests with Mockito (4 tests, ~0.4s execution)
+- Integration tests with MockMvc + H2 (5 tests, ~10s execution)
+- Performance tests: p95 latency < 500ms SLA
+- Total test suite: 11 tests, 100% pass rate
+- Test coverage: key controller paths and JPA operations
+- CI enforcement: tests run on every push/pull request
+- Report: `Phase_4_Testing_Coverage_Report.docx`
+- Tests: `src/test/java/com/example/devopshello/`
 
 ## Repository Structure
 ```
-fundamentals-and-setup/
-├── .gitignore
-├── .github/workflows/ci.yml    # CI pipeline
-├── Core_Concepts_and_Skills_Report.docx   # Task 2
-├── Fundamentals_and_Setup_Report.docx     # Task 1
-├── make_report.py                # Phase 1 report generator
-├── pom.xml                       # Spring Boot dependencies
+devops-hello/
 ├── Dockerfile                    # Multi-stage build
-└── src/main/java/com/example/devopshello/
-    ├── DevopsHelloApplication.java
-    ├── HelloController.java      # Legacy hello endpoint
-    ├── model/Book.java           # JPA entity
-    ├── repository/BookRepository.java
-    └── controller/BookController.java  # REST API
+├── pom.xml                       # Spring Boot 3.3.5 dependencies
+├── Core_Concepts_and_Skills_Report.docx
+├── Fundamentals_and_Setup_Report.docx
+├── Phase_3_Practical_Implementation_Report.docx
+├── Phase_4_Testing_Coverage_Report.docx
+└── src/
+    ├── com/internship/hello/              # Task 1 milestone
+    │   └── Greeting.java
+    └── main/java/com/example/devopshello/
+        ├── DevopsHelloApplication.java
+        ├── controller/BookController.java
+        ├── model/Book.java
+        ├── repository/BookRepository.java
+        └── ...
+    └── test/java/com/example/devopshello/
+        ├── BookApiTest.java
+        ├── BookControllerUnitTest.java
+        ├── BookPerformanceTest.java
+        └── HelloControllerTest.java
 ```
 
 ## API Endpoints
@@ -67,6 +85,13 @@ fundamentals-and-setup/
 docker build -t devops-hello .
 docker run -p 8080:8080 devops-hello
 ```
+
+## Test Results
+- **Tests run**: 11/11 passed (100%)
+- **Unit tests**: 4 tests (~0.4s)
+- **Integration tests**: 5 tests (~10s)
+- **Performance test**: 1 test (p95 < 500ms)
+- **Total time**: ~17s
 
 ## Conventions
 - Java packages: lowercase; classes: PascalCase
