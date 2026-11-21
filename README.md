@@ -38,6 +38,30 @@ This repository hosts the completed internship tasks. It demonstrates environmen
 - Report: `Phase_4_Testing_Coverage_Report.docx`
 - Tests: `src/test/java/com/example/devopshello/`
 
+### Task 5 — Deployment and Production
+- **Health endpoint**: Custom `/api/health` REST endpoint (`HealthController.java`) returning `{status, timestamp}`; implements Spring Actuator `HealthIndicator`
+- **Multi-profile config**: `application.properties` (dev), `application-staging.properties` (H2 console enabled, DEBUG logging), `application-prod.properties` (H2 console disabled, INFO/WARN/ERROR logging, log to /var/log)
+- **Structured logging**: `logback-spring.xml` with CONSOLE + FILE appenders, SizeAndTimeBasedRollingPolicy (10MB/file, 30-day history, 1GB cap)
+- **Kubernetes manifests** (`k8s/deployment.yaml`):
+  - Namespace: `devops-hello`, Deployment with 2 replicas
+  - RollingUpdate strategy (maxSurge=1, maxUnavailable=0)
+  - Liveness probe: `/actuator/health/liveness` (initialDelay=30s, period=15s)
+  - Readiness probe: `/actuator/health/readiness` (initialDelay=20s, period=10s)
+  - Startup probe: failureThreshold=12 (allows ~60s for Spring boot)
+  - Resource requests: 256Mi/250m, limits: 512Mi/500m
+  - Service: ClusterIP port 80→8080
+  - ConfigMap for environment variables
+  - ServiceMonitor for Prometheus scraping at `/actuator/prometheus` every 15s
+- **Docker Compose** (`docker-compose.yml`): Book catalogue service with healthcheck, staging profile, JSON-file log rotation (10MB max, 3 files), optional Promtail sidecar for log shipping
+- **GitHub Actions CD** (`.github/workflows/cd.yml`):
+  - 5 jobs: build-test → docker-build → deploy-staging → deploy-production → rollback
+  - Auto-deploy to staging on push to master
+  - Manual approval gate (GitHub Environment) required for production
+  - Rollback trigger via `workflow_dispatch` with target image tag input
+- **Deployment scripts** (`scripts/deploy.sh`, `scripts/rollback.sh`): Pre-deploy namespace check, kubectl apply, rollout status wait (300s timeout), post-deploy pod verification
+- **Monitoring**: Prometheus metrics via Micrometer (`/actuator/prometheus`), Spring Boot Actuator health/metrics/info endpoints
+- **Test results**: 14 tests, 100% pass rate (including 3 new HealthControllerTest integration tests)
+
 ## Repository Structure
 ```
 devops-hello/
@@ -57,10 +81,25 @@ devops-hello/
         ├── repository/BookRepository.java
         └── ...
     └── test/java/com/example/devopshello/
-        ├── BookApiTest.java
-        ├── BookControllerUnitTest.java
-        ├── BookPerformanceTest.java
-        └── HelloControllerTest.java
+    ├── BookApiTest.java
+    ├── BookControllerUnitTest.java
+    ├── BookPerformanceTest.java
+    ├── HelloControllerTest.java
+    └── controller/HealthControllerTest.java
+```
+
+#### Deployment Artifacts
+```
+k8s/
+└── deployment.yaml       # K8s Deployment, Service, ConfigMap, ServiceMonitor
+docker-compose.yml        # Local staging environment with healthcheck
+.github/workflows/
+├── main.yml              # CI: build + Docker push
+└── cd.yml                # CD: deploy-staging → manual approval → production → rollback
+scripts/
+├── deploy.sh             # Staging/production deploy with validation
+└── rollback.sh           # Standalone rollback to previous image
+```
 ```
 
 ## API Endpoints
@@ -87,9 +126,9 @@ docker run -p 8080:8080 devops-hello
 ```
 
 ## Test Results
-- **Tests run**: 11/11 passed (100%)
+- **Tests run**: 14/14 passed (100%)
 - **Unit tests**: 4 tests (~0.4s)
-- **Integration tests**: 5 tests (~10s)
+- **Integration tests**: 8 tests (~10s) — including 3 new HealthControllerTest tests for `/api/health`, `/actuator/health`, `/actuator/metrics`
 - **Performance test**: 1 test (p95 < 500ms)
 - **Total time**: ~17s
 

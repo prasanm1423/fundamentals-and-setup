@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # --- Application service ---
+  book-catalogue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: devops-hello:${VERSION:-local}
+    container_name: book-catalogue
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=staging
+      - SERVER_PORT=8080
+      - PROMETHEUS_EXPORT_ENABLED=true
+      - H2_CONSOLE_ENABLED=false
+      - LOG_LEVEL_APP=DEBUG
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # --- Optional: Promtail log shipper (placeholder) ---
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./logs:/var/log/app
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    depends_on:
+      - book-catalogue
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
