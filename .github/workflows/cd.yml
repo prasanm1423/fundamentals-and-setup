@@ -5,6 +5,12 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
+    inputs:
+      target_image:
+        description: 'Docker image tag to rollback to (e.g., sha-abc123)'
+        required: true
+        type: string
 
 jobs:
   # ──────────────────────────────────────────
@@ -170,11 +176,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     environment:
       name: production
-    inputs:
-      target_image:
-        description: 'Docker image tag to rollback to (e.g., sha-abc123)'
-        required: true
-        type: string
     steps:
       - name: Execute Rollback
         run: |
